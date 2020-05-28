@@ -1,7 +1,7 @@
 # Template file for 'mariadb'
 pkgname=mariadb
-version=10.1.30
-revision=8
+version=10.3.23
+revision=1
 build_style=cmake
 configure_args="-DMYSQL_DATADIR=/var/lib/mysql
  -DMYSQL_UNIX_ADDR=/run/mysqld/mysqld.sock -DDEFAULT_CHARSET=utf8
@@ -27,14 +27,14 @@ maintainer="Orphaned <orphan@voidlinux.org>"
 license="GPL-2.0-only"
 homepage="https://mariadb.org/"
 distfiles="http://archive.mariadb.org/$pkgname-$version/source/$pkgname-$version.tar.gz"
-checksum=173a5e5a24819e0a469c3bd09b5c98491676c37c6095882a2ea34c5af0996c88
+checksum=fc405022457d8eec5991b870cc1c9a07b83b551d6165c414c4d8f31523aa86ae
 lib32disabled=yes
 provides="mysql-${version}_${revision}"
 replaces="mysql>=0"
-conf_files="/etc/mysql/my.cnf"
 system_accounts="mysql"
 mysql_homedir="/var/lib/mysql"
 CFLAGS="-w"
+python_version=3
 
 pre_configure() {
 	# We need some host binaries before starting cross compilation.
@@ -79,9 +79,6 @@ post_install() {
 	rm -rf ${DESTDIR}/usr/{sql-bench,mysql-test,data}
 	rm -f ${DESTDIR}/usr/share/man/man1/mysql-test-run.pl.1
 
-	# Configuration file.
-	install -Dm644 ${DESTDIR}/usr/share/mysql/my-medium.cnf ${DESTDIR}/etc/mysql/my.cnf
-
 	vsv mysqld
 }
 
@@ -90,8 +87,7 @@ libmariadbclient_package() {
 	provides="libmysqlclient-${version}_${revision}"
 	replaces="libmysqlclient>=0"
 	pkg_install() {
-		vmove "usr/lib/libmysqld.so.*"
-		vmove "usr/lib/libmysqlclient*.so.*"
+		vmove "usr/lib/libmariadb.so.*"
 	}
 }
 libmariadbclient-devel_package() {
