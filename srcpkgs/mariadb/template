@@ -1,7 +1,7 @@
 # Template file for 'mariadb'
 pkgname=mariadb
-version=10.1.30
-revision=8
+version=10.4.13
+revision=1
 build_style=cmake
 configure_args="-DMYSQL_DATADIR=/var/lib/mysql
  -DMYSQL_UNIX_ADDR=/run/mysqld/mysqld.sock -DDEFAULT_CHARSET=utf8
@@ -16,25 +16,30 @@ configure_args="-DMYSQL_DATADIR=/var/lib/mysql
  -DWITH_BLACKHOLE_STORAGE_ENGINE=1 -DWITH_PARTITION_STORAGE_ENGINE=1
  -DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 -DWITHOUT_FEDERATED_STORAGE_ENGINE=1
  -DWITH_EXTRA_CHARSETS=complex -DWITH_LIBWRAP=OFF -DSTACK_DIRECTION=1
- -DWITHOUT_PBXT_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1"
-hostmakedepends="perl bison ncurses-devel libressl-devel libatomic-devel
- pkg-config"
+ -DWITHOUT_PBXT_STORAGE_ENGINE=1 -DWITH_INNOBASE_STORAGE_ENGINE=1
+ -DSKIP_TESTS=ON"
+hostmakedepends="perl bison pkg-config git ncurses-devel libressl-devel
+ gnutls-devel"
 makedepends="zlib-devel ncurses-devel libressl-devel readline-devel pcre-devel
- libatomic-devel"
+ libevent-devel libcurl-devel gnutls-devel"
 depends="mariadb-client"
 short_desc="Fast SQL database server, drop-in replacement for MySQL"
 maintainer="Orphaned <orphan@voidlinux.org>"
-license="GPL-2.0-only"
+license="GPL-2.0-only, LGPL-2.1-only"
 homepage="https://mariadb.org/"
 distfiles="http://archive.mariadb.org/$pkgname-$version/source/$pkgname-$version.tar.gz"
-checksum=173a5e5a24819e0a469c3bd09b5c98491676c37c6095882a2ea34c5af0996c88
+checksum=45bbbb12d1de8febd9edf630e940c23cf14efd60570c743b268069516a5d91df
 lib32disabled=yes
 provides="mysql-${version}_${revision}"
 replaces="mysql>=0"
-conf_files="/etc/mysql/my.cnf"
 system_accounts="mysql"
 mysql_homedir="/var/lib/mysql"
 CFLAGS="-w"
+python_version=3
+
+if [ "$XBPS_TARGET_NO_ATOMIC8" ]; then
+	makedepends+=" libatomic-devel"
+fi
 
 pre_configure() {
 	# We need some host binaries before starting cross compilation.
@@ -49,6 +54,8 @@ pre_configure() {
 		cp sql/gen_lex_token bin.host
 		make clean
 		rm CMakeCache.txt
+		configure_args+=" -DLIBRESSL_RESULT=FALSE -DLIBRESSL_RESULT__TRYRUN_OUTPUT=\"LibreSSL 3.0.2\""
+
 	fi
 }
 
@@ -80,7 +87,7 @@ post_install() {
 	rm -f ${DESTDIR}/usr/share/man/man1/mysql-test-run.pl.1
 
 	# Configuration file.
-	install -Dm644 ${DESTDIR}/usr/share/mysql/my-medium.cnf ${DESTDIR}/etc/mysql/my.cnf
+	install -Dm644 ${wrksrc}/debian/additions/my.cnf ${DESTDIR}/etc/mysql/my.cnf
 
 	vsv mysqld
 }
@@ -90,8 +97,8 @@ libmariadbclient_package() {
 	provides="libmysqlclient-${version}_${revision}"
 	replaces="libmysqlclient>=0"
 	pkg_install() {
-		vmove "usr/lib/libmysqld.so.*"
-		vmove "usr/lib/libmysqlclient*.so.*"
+		vmove "usr/lib/libmariadbd.so.*"
+		vmove "usr/lib/libmariadb.so.*"
 	}
 }
 libmariadbclient-devel_package() {

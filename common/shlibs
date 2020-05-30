@@ -596,8 +596,7 @@ libecpg.so.6 postgresql-libs-8.4.2_1
 libpgtypes.so.3 postgresql-libs-8.4.2_1
 libpq.so.5 postgresql-libs-8.4.2_1
 libmypaint-1.5.so.1 libmypaint-1.5.1_1
-libmysqlclient_r.so.18 libmysqlclient-5.5.27_1
-libmysqlclient.so.18 libmysqlclient-5.5.27_1
+libmariadb.so.3 libmariadb-client-10.4.13_1
 libgssapi_krb5.so.2 mit-krb5-libs-1.8_1
 libgssrpc.so.4 mit-krb5-libs-1.8_1
 libk5crypto.so.3 mit-krb5-libs-1.8_1
@@ -1620,7 +1619,7 @@ libdovecot-storage.so.0 dovecot-2.2.11_2
 libdovecot-lda.so.0 dovecot-2.2.11_2
 libnetapi.so.0 samba-3.6.23_1
 libsmbsharemodes.so.0 samba-3.6.23_1
-libmysqld.so.18 libmariadbclient-5.5.36_1
+libmariadbd.so.19 libmariadbclient-10.4.13_1
 libwiretap.so.10 libwireshark-3.2.0_1
 libwireshark.so.13 libwireshark-3.2.0_1
 libwsutil.so.11 libwireshark-3.2.0_1
